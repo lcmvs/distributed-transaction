@@ -1,0 +1,47 @@
+server:
+  port: 8081 # 端口
+  servlet:
+    context-path: /seata-test
+
+spring:
+  application:
+    name: seata-test  # 应用名
+  datasource:
+    # dynamic-datasource-spring-boot-starter 动态数据源的配配项，对应 DynamicDataSourceProperties 类
+    dynamic:
+      primary: order-ds # 设置默认的数据源或者数据源组，默认值即为 master
+      datasource:
+        # 订单 order 数据源配置
+        order-ds:
+          url: jdbc:mysql://127.0.0.1:3306/seata_order?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&allowMultiQueries=true&useSSL=false&tinyInt1isBit=false&serverTimezone=GMT%2B8
+          driver-class-name: com.mysql.jdbc.Driver
+          username: root
+          password: root
+        # 账户 pay 数据源配置
+        amount-ds:
+          url: jdbc:mysql://127.0.0.1:3306/seata_amount?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&allowMultiQueries=true&useSSL=false&tinyInt1isBit=false&serverTimezone=GMT%2B8
+          driver-class-name: com.mysql.jdbc.Driver
+          username: root
+          password: root
+        # 库存 storage 数据源配置
+        storage-ds:
+          url: jdbc:mysql://127.0.0.1:3306/seata_storage?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&allowMultiQueries=true&useSSL=false&tinyInt1isBit=false&serverTimezone=GMT%2B8
+          driver-class-name: com.mysql.jdbc.Driver
+          username: root
+          password: root
+      seata: true # 是否启动对 Seata 的集成
+
+# Seata 配置项，对应 SeataProperties 类
+seata:
+  application-id: ${spring.application.name} # Seata 应用编号，默认为 ${spring.application.name}
+  tx-service-group: ${spring.application.name}-group # Seata 事务组编号，用于 TC 集群名
+  # 服务配置项，对应 ServiceProperties 类
+  service:
+    vgroup-mapping:
+      seata-test-group: default # TC 集群（必须与seata-server保持一致）
+    enable-degrade: false # 降级开关
+    disable-global-transaction: false # 禁用全局事务（默认false）
+    grouplist:
+      default: 127.0.0.1:8091
+
+
